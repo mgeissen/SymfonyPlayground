@@ -9,6 +9,7 @@
 namespace App\Controller;
 
 
+use App\Entity\Pokemon;
 use App\Repository\PokemonRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -25,7 +26,7 @@ class HelloWorldController extends Controller{
      */
     public function indexAction(EntityManagerInterface $entityManager): Response {
 
-            $repo = $entityManager->getRepository(PokemonRepository::class);
+            $repo = $entityManager->getRepository(Pokemon::class);
             $pokemon = $repo->find(1);
             $name = $pokemon->getName();
 

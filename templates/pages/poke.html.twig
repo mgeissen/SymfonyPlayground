@@ -3,10 +3,14 @@
 {% block title %}Formular{% endblock %}
 
 {% block body %}
-    <h1>Pokemon</h1>
-    <div>Id: {{ pokemon.id }}</div>
-    <div>Name: {{ pokemon.name }}</div>
-    <div>Height: {{ pokemon.height }}</div>
-    <div>Weight: {{ pokemon.weight }}</div>
-    <div>Imaghe: {{ pokemon.image }}</div>
+    <div><a class="btn btn-primary  " href="{{ path("pokeList") }}">Zurück zur Übersicht</a></div>
+    <div class="card" style="width: 18rem;">
+        <img class="card-img-top" src="{{ pokemon.image }}" alt="Card image cap">
+        <div class="card-body">
+            <h5 class="card-title">{{ pokemon.name }} ({{ pokemon.id }})</h5>
+            <p class="card-text">{{ pokemon.name }} hat eine Höhe von {{ pokemon.height }}
+                und Breite von {{ pokemon.weight }}.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+        </div>
+    </div>
 {% endblock %}

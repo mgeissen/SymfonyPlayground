@@ -25,32 +25,46 @@ class PokemonController extends Controller
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function indexAction(int $id, EntityManagerInterface $entityManager)
+    public function indexActionOne(int $id, EntityManagerInterface $entityManager)
     {
-        $pokemon = $entityManager->getRepository(PokemonRepository::class)->find($id);
+        $pokemon = $entityManager->getRepository(Pokemon::class)->find($id);
 
         if ($pokemon === null) {
             try {
-                $apiResponse = json_decode(file_get_contents("http://pokeapi.co/api/v2/pokemon/$id"), true);
+                $url = "http://pokeapi.co/api/v2/pokemon/$id";
+                $apiResponse = json_decode(file_get_contents($url), true);
 
                 $pokemon = new Pokemon();
-                $pokemon->setId($id);
-                $pokemon->setName($apiResponse["id"]);
-                $pokemon->setImage($apiResponse["sprites"]["font_default"]);
+                $pokemon->setId($apiResponse["id"]);
+                $pokemon->setName($apiResponse["name"]);
                 $pokemon->setHeight($apiResponse["height"]);
                 $pokemon->setWeight($apiResponse["weight"]);
+                $pokemon->setImage($apiResponse["sprites"]["front_default"]);
 
                 $entityManager->persist($pokemon);
                 $entityManager->flush();
 
             } catch (\Exception $e) {
-                return new Response("No pokemon found for this ID");
+                return new Response("No pokemon found for this ID - " . $e->getMessage());
             }
         }
 
 
         return $this->render("pages/poke.html.twig", [
             "pokemon" => $pokemon
+        ]);
+    }
+
+    /**
+     * @Route(path="/poke", name="pokeList")
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
+    public function indexActionList(EntityManagerInterface $entityManager){
+        $pokemons = $entityManager->getRepository(Pokemon::class)->findAll();
+
+        return $this->render("pages/pokeList.html.twig", [
+            "pokemons" => $pokemons
         ]);
     }
 }

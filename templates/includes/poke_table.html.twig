@@ -1,0 +1,22 @@
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Id</th>
+        <th scope="col">Name</th>
+        <th scope="col">Height</th>
+        <th scope="col">Weight</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for poke in pokemons %}
+        <tr id="{{ poke.id }}">
+            <th scope="row"><img src="{{ poke.image }}"></th>
+            <td><a href="{{ path("poke", {'id': poke.id}) }}">{{ poke.id }}</a></td>
+            <td>{{ poke.name }}</td>
+            <td>{{ poke.height }}</td>
+            <td>{{ poke.weight }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
