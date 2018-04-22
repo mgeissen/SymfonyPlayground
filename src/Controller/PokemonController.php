@@ -11,6 +11,7 @@ namespace App\Controller;
 
 use App\Entity\Pokemon;
 use App\Repository\PokemonRepository;
+use App\Service\PokemonService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,35 +21,27 @@ use Symfony\Component\Routing\Annotation\Route;
 class PokemonController extends Controller
 {
     /**
+     * @var PokemonService
+     */
+    private $pokemonService;
+
+    /**
+     * PokemonController constructor.
+     * @param PokemonService $pokemonService
+     */
+    public function __construct(PokemonService $pokemonService){
+        $this->pokemonService = $pokemonService;
+    }
+
+
+    /**
      * @Route(path="/poke/{id}", name="poke")
      * @param int $id
-     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function indexActionOne(int $id, EntityManagerInterface $entityManager)
+    public function indexActionOne(int $id)
     {
-        $pokemon = $entityManager->getRepository(Pokemon::class)->find($id);
-
-        if ($pokemon === null) {
-            try {
-                $url = "http://pokeapi.co/api/v2/pokemon/$id";
-                $apiResponse = json_decode(file_get_contents($url), true);
-
-                $pokemon = new Pokemon();
-                $pokemon->setId($apiResponse["id"]);
-                $pokemon->setName($apiResponse["name"]);
-                $pokemon->setHeight($apiResponse["height"]);
-                $pokemon->setWeight($apiResponse["weight"]);
-                $pokemon->setImage($apiResponse["sprites"]["front_default"]);
-
-                $entityManager->persist($pokemon);
-                $entityManager->flush();
-
-            } catch (\Exception $e) {
-                return new Response("No pokemon found for this ID - " . $e->getMessage());
-            }
-        }
-
+        $pokemon = $this->pokemonService->getPokemonById($id);
 
         return $this->render("pages/poke.html.twig", [
             "pokemon" => $pokemon
@@ -57,11 +50,10 @@ class PokemonController extends Controller
 
     /**
      * @Route(path="/poke", name="pokeList")
-     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function indexActionList(EntityManagerInterface $entityManager){
-        $pokemons = $entityManager->getRepository(Pokemon::class)->findAll();
+    public function indexActionList(){
+        $pokemons = $this->pokemonService->getAll();
 
         return $this->render("pages/pokeList.html.twig", [
             "pokemons" => $pokemons
